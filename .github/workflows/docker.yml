@@ -6,9 +6,14 @@ name: ros2-images-CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ feature/galactic ]
+    branches: 
+    - 'feature/**' 
+    - main
+    - devel
   pull_request:
-    branches: [ main ]
+    branches: 
+    - main
+    - devel 
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -34,22 +39,30 @@ jobs:
 
       # Build ros2 images and push to docker hub
       - name: Run docker build and push galactic
+        env:
+          ROS_DISTRO:galactic
         run: |
           make clean
-          ROS_DISTRO=galactic make
+          make
           make push
       - name: Run docker build and push foxy
+        env:
+          ROS_DISTRO:foxy
         run: |
           make clean
-          ROS_DISTRO=foxy make
+          make
           make push
       - name: Run docker build and push eloquent
+        env:
+          ROS_DISTRO:eloquent
         run: |
           make clean
-          ROS_DISTRO=eloquent make
+          make
           make push
       - name: Run docker build and push dashing
+        env:
+          ROS_DISTRO:dashing
         run: |
           make clean
-          ROS_DISTRO=dashing make
+          make
           make push
