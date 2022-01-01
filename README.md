@@ -6,8 +6,7 @@ Repository of ros2-images
 
 | ROS distro | type |
 |:----------:|:----:|
-| galactic   | (todo) |
+| galactic   | - base </br>- full</br> - torch (todo) |
 | foxy       | - base </br>- full</br> - torch (todo) |
-| eloquent   | (todo) |
-| dashing    | (todo) |
-| crystal    | (todo) |
+| eloquent   | - base </br>- full</br> - torch (todo) |
+| dashing    | - base </br>- full</br> - torch (todo) |

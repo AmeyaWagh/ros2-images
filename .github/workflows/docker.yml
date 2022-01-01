@@ -36,6 +36,6 @@ jobs:
       - name: Run docker build and push foxy
         run: |
           make clean
-          ROS_DISTRO=foxy && make
+          ROS_DISTRO=foxy make
           make push
           make clean
