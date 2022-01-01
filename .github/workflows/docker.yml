@@ -6,7 +6,7 @@ name: ros2-images-CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ feature/galactic ]
   pull_request:
     branches: [ main ]
 
@@ -32,10 +32,24 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }} 
 
-      # Runs a single command using the runners shell
+      # Build ros2 images and push to docker hub
+      - name: Run docker build and push galactic
+        run: |
+          make clean
+          ROS_DISTRO=galactic make
+          make push
       - name: Run docker build and push foxy
         run: |
           make clean
           ROS_DISTRO=foxy make
           make push
+      - name: Run docker build and push eloquent
+        run: |
           make clean
+          ROS_DISTRO=eloquent make
+          make push
+      - name: Run docker build and push dashing
+        run: |
+          make clean
+          ROS_DISTRO=dashing make
+          make push
