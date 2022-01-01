@@ -6,9 +6,9 @@ name: ros2-images-CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ feature/foxy ]
   pull_request:
-    branches: [ main ]
+    branches: [ feature/foxy ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  build_and_push:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -26,11 +26,13 @@ jobs:
       - uses: actions/checkout@v2
 
       # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Run docker builder
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          make clean
+          make
+
+      # # Runs a set of commands using the runners shell
+      # - name: push docker images
+      #   run: |
+      #     make push
+      #     make clean
