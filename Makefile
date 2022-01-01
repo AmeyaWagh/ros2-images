@@ -6,6 +6,7 @@ ROS_DISTRO?=foxy
 BASE_OS?=ubuntu:focal
 DOCKER_FILE?=Dockerfile.ros2.ubuntu.x86_64
 
+
 ifeq ($(ROS_DISTRO), galactic)
 	BASE_OS=ubuntu:focal
 	DOCKER_FILE=Dockerfile.ros2.ubuntu.${AARCH}
