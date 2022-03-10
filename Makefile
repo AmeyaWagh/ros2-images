@@ -6,21 +6,23 @@ ROS_DISTRO?=foxy
 BASE_OS?=ubuntu:focal
 DOCKER_FILE?=Dockerfile.ros2.ubuntu.x86_64
 
+ifeq ($(AARCH), x86_64)
+	AARCH=x86_64
+else ifeq ($(AARCH), cuda)
+	AARCH=cuda
 
 ifeq ($(ROS_DISTRO), galactic)
 	BASE_OS=ubuntu:focal
-	DOCKER_FILE=Dockerfile.ros2.ubuntu.${AARCH}
 else ifeq ($(ROS_DISTRO), foxy)
 	BASE_OS=ubuntu:focal
-	DOCKER_FILE=Dockerfile.ros2.ubuntu.${AARCH}
 else ifeq ($(ROS_DISTRO), eloquent)
 	BASE_OS=ubuntu:bionic
-	DOCKER_FILE=Dockerfile.ros2.ubuntu.${AARCH}
 else ifeq ($(ROS_DISTRO), dashing)
 	BASE_OS=ubuntu:bionic
-	DOCKER_FILE=Dockerfile.ros2.ubuntu.${AARCH}
 endif
 
+
+DOCKER_FILE=Dockerfile.ros2.ubuntu.${AARCH}
 IMAGE_NAME=ros2-images
 TAG_NAME=${ROS_DISTRO}-${AARCH}
 DOCKER_PUSH_REGISTRY?=ameyawagh

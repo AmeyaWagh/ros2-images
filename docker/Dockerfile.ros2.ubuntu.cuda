@@ -1,0 +1,3 @@
+ARG BASE
+FROM ${BASE} as ros2_base
+ARG CUDA_VERSION
