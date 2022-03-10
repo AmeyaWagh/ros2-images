@@ -4,13 +4,13 @@ name: ros2-images-CI
 on:
   push:
     branches: 
-    - 'feature/**' 
+    # - 'feature/**' 
     - main
     - devel
   pull_request:
     branches: 
     - main
-    - devel 
+    # - devel 
 
   workflow_dispatch:
 
