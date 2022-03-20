@@ -43,7 +43,7 @@ ENV DEBIAN_FRONTEND=
 # setup entrypoint
 COPY ./docker/ros2_entrypoint.sh /
 
-ENTRYPOINT ["/ros_entrypoint.sh"]
+ENTRYPOINT ["/ros2_entrypoint.sh"]
 CMD ["bash"]
 
 ########################################################
