@@ -4,7 +4,7 @@ name: ros2-images-CI
 on:
   push:
     branches: 
-    # - 'feature/**' 
+    - 'feature/**' 
     - main
     - devel
   pull_request:
@@ -29,11 +29,19 @@ jobs:
       # Build ros2 images and push to docker hub
       - name: Run docker build and push galactic
         env:
+          COMPUTE: cpu
           ROS_DISTRO: galactic
         run: |
           make clean
           make
           make push
+      
+      # unittest
+      - name: run structure tests
+        uses: plexsystems/container-structure-test-action@v0.1.0
+        with:
+          image: ameyawagh/ros2-images:galactic-full
+          config: tests.yaml
   
   build_and_push_foxy:
     runs-on: ubuntu-latest

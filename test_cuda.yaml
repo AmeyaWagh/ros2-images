@@ -1,0 +1,7 @@
+schemaVersion: '2.0.0'
+commandTests:
+- name: 'colcon'
+  command: 'colcon'
+  args: ['-h']
+  excludedError: ['.*FAIL.*']
+  expectedOutput: ['.*usage:*']

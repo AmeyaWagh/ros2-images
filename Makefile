@@ -1,8 +1,12 @@
 
 default: build
 
+# user args
 COMPUTE?=cpu
 ROS_DISTRO?=foxy
+TEST_CONFIG?=test.yaml
+
+# defaults
 BASE_OS?=ubuntu:focal
 DOCKER_FILE?=Dockerfile.ros2.ubuntu.x86_64
 
@@ -75,5 +79,8 @@ push:
 
 prune:
 	docker system prune
+
+test:
+	container-structure-test test --image ${DOCKER_IMAGE}:${TAG_NAME}-full --config ${TEST_CONFIG}
 
 clean: prune
