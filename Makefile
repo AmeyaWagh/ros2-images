@@ -1,28 +1,57 @@
 
 default: build
 
-AARCH?=x86_64
+# user args
+COMPUTE?=cpu
 ROS_DISTRO?=foxy
+TEST_CONFIG?=test.yaml
+
+# defaults
 BASE_OS?=ubuntu:focal
 DOCKER_FILE?=Dockerfile.ros2.ubuntu.x86_64
 
-
 ifeq ($(ROS_DISTRO), galactic)
-	BASE_OS=ubuntu:focal
-	DOCKER_FILE=Dockerfile.ros2.ubuntu.${AARCH}
+	ifeq ($(COMPUTE), cpu)
+		DOCKER_FILE=Dockerfile.ros2.ubuntu
+		BASE_OS=ubuntu:focal
+	else ifeq ($(COMPUTE), cuda)
+		DOCKER_FILE=Dockerfile.ros2.ubuntu.cuda
+		BASE_OS=nvidia/cuda:11.5.1-cudnn8-devel-ubuntu20.04
+	endif
 else ifeq ($(ROS_DISTRO), foxy)
-	BASE_OS=ubuntu:focal
-	DOCKER_FILE=Dockerfile.ros2.ubuntu.${AARCH}
+	ifeq ($(COMPUTE), cpu)
+		DOCKER_FILE=Dockerfile.ros2.ubuntu
+		BASE_OS=ubuntu:focal
+	else ifeq ($(COMPUTE), cuda)
+		DOCKER_FILE=Dockerfile.ros2.ubuntu.cuda
+		BASE_OS=nvidia/cuda:11.5.1-cudnn8-devel-ubuntu20.04
+	endif
 else ifeq ($(ROS_DISTRO), eloquent)
-	BASE_OS=ubuntu:bionic
-	DOCKER_FILE=Dockerfile.ros2.ubuntu.${AARCH}
+	ifeq ($(COMPUTE), cpu)
+		DOCKER_FILE=Dockerfile.ros2.ubuntu
+		BASE_OS=ubuntu:bionic
+	else ifeq ($(COMPUTE), cuda)
+		DOCKER_FILE=Dockerfile.ros2.ubuntu.cuda
+		BASE_OS=nvidia/cuda:11.5.0-cudnn8-devel-ubuntu18.04
+	endif
 else ifeq ($(ROS_DISTRO), dashing)
-	BASE_OS=ubuntu:bionic
-	DOCKER_FILE=Dockerfile.ros2.ubuntu.${AARCH}
+	ifeq ($(COMPUTE), cpu)
+		DOCKER_FILE=Dockerfile.ros2.ubuntu
+		BASE_OS=ubuntu:bionic
+	else ifeq ($(COMPUTE), cuda)
+		DOCKER_FILE=Dockerfile.ros2.ubuntu.cuda
+		BASE_OS=nvidia/cuda:11.5.0-cudnn8-devel-ubuntu18.04
+	endif
 endif
 
+
 IMAGE_NAME=ros2-images
-TAG_NAME=${ROS_DISTRO}-${AARCH}
+TAG_NAME?=${ROS_DISTRO}
+ifeq ($(COMPUTE), cpu)
+	TAG_NAME=${ROS_DISTRO}
+else ifeq ($(COMPUTE), cuda)
+	TAG_NAME=${ROS_DISTRO}-cuda
+endif
 DOCKER_PUSH_REGISTRY?=ameyawagh
 DOCKER_IMAGE= ${DOCKER_PUSH_REGISTRY}/${IMAGE_NAME}
 
@@ -50,5 +79,8 @@ push:
 
 prune:
 	docker system prune
+
+test:
+	container-structure-test test --image ${DOCKER_IMAGE}:${TAG_NAME}-full --config ${TEST_CONFIG}
 
 clean: prune

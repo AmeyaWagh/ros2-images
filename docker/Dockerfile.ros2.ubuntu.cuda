@@ -1,0 +1,72 @@
+ARG BASE
+FROM ${BASE} as ros2_base
+ARG ROS_DISTRO
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# setup timezone and update locale
+RUN echo 'Etc/UTC' > /etc/timezone && \
+    ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
+    apt-get update && \
+    apt-get install -q -y --no-install-recommends tzdata sudo && \
+    apt-get update && apt-get install -y curl locales lsb-release && \
+    locale-gen en_US en_US.UTF-8 && \
+    update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 &&\
+    rm -rf /var/lib/apt/lists/*
+ENV LANG=en_US.UTF-8
+
+COPY ./docker/install_opencv.sh /
+RUN bash ./install_opencv.sh
+
+#Add the ROS 2 apt repository
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+RUN apt-get update && apt-get install -q -y --no-install-recommends \    
+    gnupg2 \    
+    git \
+    python3-argcomplete \
+    bash-completion \
+    wget \
+    ros-${ROS_DISTRO}-ros-base  && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV ROS_DISTRO=${ROS_DISTRO}
+ENV AMENT_PREFIX_PATH=/opt/ros/${ROS_DISTRO}
+ENV COLCON_PREFIX_PATH=/opt/ros/${ROS_DISTRO}
+ENV LD_LIBRARY_PATH=/opt/ros/${ROS_DISTRO}/lib
+ENV PATH=/opt/ros/${ROS_DISTRO}/bin:$PATH
+ENV PYTHONPATH=/opt/ros/${ROS_DISTRO}/lib/python3.8/site-packages
+ENV ROS_PYTHON_VERSION=3
+ENV ROS_VERSION=2
+ENV DEBIAN_FRONTEND=
+
+# setup entrypoint
+COPY ./docker/ros2_entrypoint.sh /
+
+ENTRYPOINT ["/ros2_entrypoint.sh"]
+CMD ["bash"]
+
+
+########################################################
+# Full image
+########################################################
+
+FROM ros2_base as ros2_full
+ENV DEBIAN_FRONTEND=noninteractive
+# Install the full release
+RUN apt-get update && apt-get install -y -q --no-install-recommends \
+    build-essential \
+    cmake \
+    python3-colcon-common-extensions \
+    python3-pip \
+    python3-rosdep \
+    python3-vcstool \
+    ros-${ROS_DISTRO}-desktop \
+    ros-${ROS_DISTRO}-ament-lint \
+    ros-${ROS_DISTRO}-launch-testing \
+    ros-${ROS_DISTRO}-launch-testing-ament-cmake \
+    ros-${ROS_DISTRO}-launch-testing-ros \
+    && rm -rf /var/lib/apt/lists/*
+ENV DEBIAN_FRONTEND=
+

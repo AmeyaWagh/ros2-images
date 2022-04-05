@@ -2,7 +2,7 @@
 name: ros2-images-CI
 
 on:
-  push:
+  push:    
     branches: 
     - 'feature/**' 
     - main
@@ -10,7 +10,7 @@ on:
   pull_request:
     branches: 
     - main
-    - devel 
+    # - devel 
 
   workflow_dispatch:
 
@@ -29,11 +29,19 @@ jobs:
       # Build ros2 images and push to docker hub
       - name: Run docker build and push galactic
         env:
+          COMPUTE: cpu
           ROS_DISTRO: galactic
         run: |
           make clean
           make
           make push
+      
+      # unittest
+      - name: run structure tests
+        uses: plexsystems/container-structure-test-action@v0.1.0
+        with:
+          image: ameyawagh/ros2-images:galactic-full
+          config: test.yaml
   
   build_and_push_foxy:
     runs-on: ubuntu-latest
@@ -51,6 +59,13 @@ jobs:
           make clean
           make
           make push
+      
+      # unittest
+      - name: run structure tests
+        uses: plexsystems/container-structure-test-action@v0.1.0
+        with:
+          image: ameyawagh/ros2-images:foxy-full
+          config: test.yaml
   
   build_and_push_eloquent:
     runs-on: ubuntu-latest
@@ -68,6 +83,13 @@ jobs:
           make clean
           make
           make push
+      
+      # unittest
+      - name: run structure tests
+        uses: plexsystems/container-structure-test-action@v0.1.0
+        with:
+          image: ameyawagh/ros2-images:eloquent-full
+          config: test.yaml
   
   build_and_push_dashing:
     runs-on: ubuntu-latest
@@ -85,3 +107,10 @@ jobs:
           make clean
           make
           make push
+      
+      # unittest
+      - name: run structure tests
+        uses: plexsystems/container-structure-test-action@v0.1.0
+        with:
+          image: ameyawagh/ros2-images:dashing-full
+          config: test.yaml
