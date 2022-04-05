@@ -67,7 +67,6 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
     ros-${ROS_DISTRO}-launch-testing \
     ros-${ROS_DISTRO}-launch-testing-ament-cmake \
     ros-${ROS_DISTRO}-launch-testing-ros \
-    python3-autopep8 \
     && rm -rf /var/lib/apt/lists/*
 ENV DEBIAN_FRONTEND=
 
